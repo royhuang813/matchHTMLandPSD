@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>页面还原度检测工具</title>
+
+    <style type="text/css">
+      body,
+      html {
+        padding: 0;
+        margin: 0;
+      }
+
+      #dropzone {
+        width: 500px;
+        height: 100px;
+        border: 1px #ababab dashed;
+        margin: 50px auto;
+      }
+
+      #dropzone p {
+        text-align: center;
+        line-height: 100px;
+        margin: 0;
+        padding: 0;
+      }
+
+      #image {
+        text-align: center;
+      }
+    </style>
+
+    <script src="./utils/psdJs/dist/psd.min.js"></script>
+    <script src="./utils/pixelmatch/pixelmatch@5.1.0.min.js"></script>
+  </head>
+  <body>
+    <div id="dropzone">
+      <p>Drop here</p>
+    </div>
+
+    <div id="image"></div>
+    <pre id="data"></pre>
+
+    <script type="text/javascript">
+      (function() {
+        var PSD = require("psd");
+
+        document.getElementById("dropzone").addEventListener("dragover", onDragOver, true);
+        document.getElementById("dropzone").addEventListener("drop", onDrop, true);
+
+        function onDragOver(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "copy";
+        }
+
+        function onDrop(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          PSD.fromEvent(e).then(function(psd) {
+            var data = JSON.stringify(psd.tree().export(), undefined, 2);
+            document.getElementById("data").innerHTML = data;
+            document.getElementById("image").appendChild(psd.image.toPng());
+          });
+        }
+      })();
+
+      //   const img1 = img1Context.getImageData(0, 0, width, height);
+      //   const img2 = img2Context.getImageData(0, 0, width, height);
+      //   const diff = diffContext.createImageData(width, height);
+
+      //   pixelmatch(img1.data, img2.data, diff.data, width, height, { threshold: 0.1 });
+
+      //   diffContext.putImageData(diff, 0, 0);
+    </script>
+  </body>
+</html>
